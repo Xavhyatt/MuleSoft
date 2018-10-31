@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="0536e8fb-d590-4ca4-9bcb-678936c89914" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="mule-flow-demoFlow" doc:id="b44d2296-c68c-47d2-adea-99370118c296" >
+		<http:listener doc:name="Listener" doc:id="18dc01a6-878e-48e7-a6ac-bdf851acc74d" config-ref="HTTP_Listener_config" path="/greeting"/>
+		<set-variable doc:name="Set Variable" doc:id="09631763-6da4-41e8-bc36-61cbc9486ae7" variableName="language" value="#[message.inboundProperties.'http.query.params'.'language']"/>
+		<choice doc:name="Choice" doc:id="5ac497bb-31f6-4dfb-b4e5-2ad5af0b83b9">
+			<when expression="#[flowVars.language=='en']">
+				<set-payload value="'Hello'" doc:name="Greeting English" doc:id="e714a679-f209-42b3-90af-95eae70bff5c" />
+			</when>
+			<when expression="#[flowVars.language == 'jp']">
+				<set-payload value="'Konichiwa!'" doc:name="Greeting Japanese" doc:id="ca2b26cc-162f-4b65-8a52-9034b7e4172d" />
+			</when>
+			<otherwise >
+				<set-payload value="'Sorry! no language'" doc:name="Set Payload" doc:id="0ecd887b-fa33-429e-a3f0-165c0f95e544" />
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger" doc:id="e0eb1446-74da-4e66-8700-043a68ea7645" message="#[payload]"/>
+	</flow>
+</mule>
